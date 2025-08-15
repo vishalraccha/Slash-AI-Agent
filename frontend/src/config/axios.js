@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "https://slash-ai-agent-backend.onrender.com",
     headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
     }
