@@ -1,78 +1,83 @@
-import React, { useState, useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from '../config/axios'
-import { UserContext } from '../context/user.context'
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from '../config/axios';
+import { UserContext } from '../context/user.context';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
+  function submitHandler(e) {
+    e.preventDefault();
 
-    const [ email, setEmail ] = useState('')
-    const [ password, setPassword ] = useState('')
+    axios
+      .post('/users/login', { email, password })
+      .then((res) => {
+        localStorage.setItem('token', res.data.token);
+        setUser(res.data.user);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  }
 
-    const { setUser } = useContext(UserContext)
+  return (
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#020617] overflow-hidden">
+      
+      {/* Animated Gradient Blobs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-500/40 rounded-full blur-[200px] animate-pulse" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-blue-500/40 rounded-full blur-[200px] animate-pulse delay-500" />
+      <div className="absolute top-[30%] right-[40%] w-[300px] h-[300px] bg-pink-500/30 rounded-full blur-[150px] animate-pulse delay-700" />
 
-    const navigate = useNavigate()
+      {/* Login Card */}
+      <div className="relative z-10 bg-white/5 backdrop-blur-lg p-10 rounded-2xl border border-white/10 w-full max-w-md shadow-2xl animate-fadeIn">
+        <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          Welcome Back
+        </h2>
+        <form onSubmit={submitHandler}>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              id="email"
+              className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-300 mb-2" htmlFor="password">
+              Password
+            </label>
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              id="password"
+              className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              placeholder="Enter your password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full p-3 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
+          >
+            Login
+          </button>
+        </form>
+        <p className="text-gray-400 mt-4 text-center">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-400 hover:underline">
+            Create one
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+};
 
-    function submitHandler(e) {
-
-        e.preventDefault()
-
-        axios.post('/users/login', {
-            email,
-            password
-        }).then((res) => {
-            console.log(res.data)
-
-            localStorage.setItem('token', res.data.token)
-            setUser(res.data.user)
-
-            navigate('/')
-        }).catch((err) => {
-            console.log(err.response.data)
-        })
-    }
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-2xl font-bold text-white mb-6">Login</h2>
-                <form
-                    onSubmit={submitHandler}
-                >
-                    <div className="mb-4">
-                        <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
-                        <input
-
-                            onChange={(e) => setEmail(e.target.value)}
-                            type="email"
-                            id="email"
-                            className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter your email"
-                        />
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-400 mb-2" htmlFor="password">Password</label>
-                        <input
-                            onChange={(e) => setPassword(e.target.value)}
-                            type="password"
-                            id="password"
-                            className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Enter your password"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full p-3 rounded bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        Login
-                    </button>
-                </form>
-                <p className="text-gray-400 mt-4">
-                    Don't have an account? <Link to="/register" className="text-blue-500 hover:underline">Create one</Link>
-                </p>
-            </div>
-        </div>
-    )
-}
-
-export default Login
+export default Login;
